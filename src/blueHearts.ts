@@ -21,4 +21,7 @@ const pattern =
 💙 💙 💙 💙 💙 💙 💙 💙`;
 
 assert.strictEqual(blueHeart(8), pattern);
-console.log("Tests passed");
+
+
+
+

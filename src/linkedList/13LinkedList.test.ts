@@ -1,8 +1,3 @@
-/**
- * LinkedList test suite
- * Verifies core operations like insert, delete, search, and length tracking.
- */
-
 import { LinkedList } from "./13linkedList.js";
 import { describe, it, expect, beforeEach } from "vitest";
 
@@ -21,8 +16,8 @@ describe("LinkedList", () => {
    */
   it("should initialize empty", () => {
     expect(list.length()).toBe(0);
-    expect(list.head).toBeNull();
-    expect(list.tail).toBeNull();
+    expect(list.valueAtHead()).toBeNull();
+    expect(list.valueAtTail()).toBeNull();
   });
 
   /**
@@ -33,7 +28,8 @@ describe("LinkedList", () => {
     list.addAtEnd(20);
 
     expect(list.length()).toBe(2);
-    expect(list.tail!.value).toBe(20);
+    expect(list.valueAtTail()).toBe(20);
+    expect(list.valueAtHead()).toBe(10);
   });
 
   /**
@@ -47,6 +43,7 @@ describe("LinkedList", () => {
 
     expect(removed).toBe(25);
     expect(list.length()).toBe(1);
+    expect(list.valueAtTail()).toBe(15);
   });
 
   /**
@@ -56,7 +53,7 @@ describe("LinkedList", () => {
     list.addAtHead(30);
     list.addAtHead(40);
 
-    expect(list.head!.value).toBe(40);
+    expect(list.valueAtHead()).toBe(40);
     expect(list.length()).toBe(2);
   });
 
@@ -67,7 +64,8 @@ describe("LinkedList", () => {
     list.addAtHead(1);
     list.addAtHead(2);
 
-    expect(list.head!.value).toBe(2);
+    expect(list.valueAtHead()).toBe(2);
+    expect(list.valueAtIndex(1)).toBe(1);
     expect(list.length()).toBe(2);
   });
 
@@ -82,6 +80,7 @@ describe("LinkedList", () => {
 
     expect(value).toBe(9);
     expect(list.length()).toBe(1);
+    expect(list.valueAtHead()).toBe(19);
   });
 
   /**
@@ -93,6 +92,20 @@ describe("LinkedList", () => {
 
     expect(list.searchFor(250)).toBe(250);
     expect(list.searchFor(999)).toBeNull();
+  });
+
+  /**
+   * Should return correct value at specific index
+   */
+  it("should return value at index", () => {
+    list.addAtEnd(5);
+    list.addAtEnd(15);
+    list.addAtEnd(25);
+
+    expect(list.valueAtIndex(0)).toBe(5);
+    expect(list.valueAtIndex(1)).toBe(15);
+    expect(list.valueAtIndex(2)).toBe(25);
+    expect(list.valueAtIndex(3)).toBeNull(); // out of bounds
   });
 
   /**

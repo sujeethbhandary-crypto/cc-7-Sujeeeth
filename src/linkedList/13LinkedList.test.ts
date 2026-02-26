@@ -1,3 +1,7 @@
+/**
+ * LinkedList test suite
+ * Verifies core operations like insert, delete, search, and length tracking.
+ */
 import { LinkedList } from "./13linkedList.js";
 import { describe, it, expect, beforeEach } from "vitest";
 

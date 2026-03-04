@@ -18,11 +18,13 @@ const result = lines
     const [item, qty] = obj.split(" ");
     const added10 = Number(qty) + 10;
     return `${item} ${added10}`;
-  });
+  })
+  .join("\n");
 
-assert.deepStrictEqual(result, [
-  "items qty",
-  "mango 60",
-  "onion 41",
-  "water 20",
-]);
+assert.strictEqual(
+  result,
+  `items qty
+mango 60
+onion 41
+water 20`,
+);

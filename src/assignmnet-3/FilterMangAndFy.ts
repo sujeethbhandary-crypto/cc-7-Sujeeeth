@@ -16,8 +16,7 @@ let itemsFilter = [
 ];
 
 const filterMangOrFy = itemsFilter.filter(
-  (item) =>
-    item.substring(0, 4) !== "mang" && item.substring(item.length - 2) !== "fy",
+  (item) => !/^mang/.test(item) && !/fy$/.test(item),
 );
 
 assert.deepStrictEqual(filterMangOrFy, ["semangin", "2 lonely", "notifyy"]);

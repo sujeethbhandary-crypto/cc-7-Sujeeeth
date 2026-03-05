@@ -13,12 +13,13 @@ const emails = [
   "CodeCraft",
 ];
 
-const extractedEmails = emails
-  .filter((line) => line.includes("@") && line.includes("."))
-  .map((line) => {
-    const words = line.split(" ");
-    return words.find((word) => word.includes("@"));
-  })
-  .map((email) => email!.toLowerCase());
+const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/;
+
+// Using flatMap to extract and flatten in one step
+const extractedEmails: string[] = emails.flatMap((line) => {
+  const matches = line.match(emailRegex);
+  return matches ? matches.map((email) => email.toLowerCase()) : [];
+});
 
 assert.deepStrictEqual(extractedEmails, ["bs@sft.com", "michel@sun.it"]);
+// console.log(extractedEmails);

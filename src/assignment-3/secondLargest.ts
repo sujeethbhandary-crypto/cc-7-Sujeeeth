@@ -6,22 +6,21 @@ import assert from "node:assert";
  * @param arr - Array of numbers
  * @returns Second largest number
  */
+
 const findSecondLargestForEach = (arr: number[]): number => {
   let largest: number = -Infinity;
   let secondLargest: number = -Infinity;
 
-  for (let num of arr) {
+  arr.forEach((num: number) => {
     if (num > largest) {
       secondLargest = largest;
       largest = num;
     } else if (num > secondLargest && num !== largest) {
       secondLargest = num;
     }
-  }
-
+  });
   return secondLargest;
 };
-
 const numbers: number[] = [10, 16, 19, 25, 15];
 
 const result1: number = findSecondLargestForEach(numbers);

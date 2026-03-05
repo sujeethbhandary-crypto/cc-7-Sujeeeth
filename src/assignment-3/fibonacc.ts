@@ -34,7 +34,7 @@ const values: number[] = [2, 1, 5, 7];
  *
  * @type {number[]}
  */
-const generateFibonaci: number[] = values.map((index) => fibonaci(index));
+const generateFibonaci: number[] = values.map(fibonaci);
 
 // console.log(generateFibonaci);
 assert.deepStrictEqual(generateFibonaci, [1, 1, 5, 13]);

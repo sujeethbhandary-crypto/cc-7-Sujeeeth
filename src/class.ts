@@ -93,7 +93,7 @@ if (shapes.length === 0) {
 
 let smallest: Shape = shapes[0]!;
 
-for (let shape of shapes) {
+for (const shape of shapes) {
   if (shape.area() < smallest.area()) {
     smallest = shape;
   }

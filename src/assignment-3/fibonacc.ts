@@ -14,7 +14,7 @@ const fibonaci = (n: number): number => {
   let b: number = 1;
 
   for (let i: number = 2; i <= n; i++) {
-    let temp: number = a + b;
+    const temp: number = a + b;
     a = b;
     b = temp;
   }

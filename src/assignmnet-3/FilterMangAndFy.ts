@@ -5,7 +5,7 @@ import assert from "node:assert";
  * - start with "mang"
  * - end with "fy"
  */
-let itemsFilter = [
+const itemsFilter = [
   "mangalore",
   "semangin",
   "2 lonely",

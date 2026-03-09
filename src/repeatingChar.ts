@@ -8,24 +8,24 @@ import assert from "assert";
  * @returns A substring containing unique characters until a repeat is found.
  */
 function getStringSpecial(str: string): string {
-    let result = "";
-    for (let i = 0; i < str.length; i++) {
-        let currentChar = str.charAt(i);
-        if (result.includes(currentChar)) {
-            break;
-        }
-        result += currentChar;
+  let result = "";
+  for (let i = 0; i < str.length; i++) {
+    const currentChar = str.charAt(i);
+    if (result.includes(currentChar)) {
+      break;
     }
-    return result;
+    result += currentChar;
+  }
+  return result;
 }
 
 // Correct Assertions
-assert.strictEqual(getStringSpecial('a dream that is'), 'a dre');
-assert.strictEqual(getStringSpecial('unparliamentary'), 'unparli');
+assert.strictEqual(getStringSpecial("a dream that is"), "a dre");
+assert.strictEqual(getStringSpecial("unparliamentary"), "unparli");
 
 //  Wrong Assertion
 assert.strictEqual(
-    getStringSpecial('hello'),
-    'hell', 
-    "Failed: Incorrect expected substring for input 'hello'"
+  getStringSpecial("hello"),
+  "hell",
+  "Failed: Incorrect expected substring for input 'hello'",
 );

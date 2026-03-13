@@ -85,3 +85,17 @@ getContents(filePath)
 getSize(filePath)
   .then((size) => console.log("Total Size:", size))
   .catch((err) => console.log(err.message));
+
+const dirPath = "C:/Users/Sujeeth/Desktop/Assignment-assert/src/Promise";
+
+getFileType(dirPath)
+  .then((type) => console.log("File Type:", type))
+  .catch((err) => console.log(err.message));
+
+getContents(dirPath)
+  .then((content) => console.log("Contents:", content))
+  .catch((err) => console.log(err.message));
+
+getSize(dirPath)
+  .then((size) => console.log("Total Size:", size))
+  .catch((err) => console.log(err.message));

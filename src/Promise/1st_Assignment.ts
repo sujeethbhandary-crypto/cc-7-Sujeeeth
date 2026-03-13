@@ -31,31 +31,27 @@ function getFileType(
  */
 function getContents(filePath: string): Promise<string | string[]> {
   return new Promise((resolve, reject) => {
-    fs.stat(filePath, (err, stats) => {
-      if (err) {
-        reject(new Error("file system error"));
-        return;
-      }
-
-      switch (true) {
-        case stats.isFile():
+    getFileType(filePath)
+      .then((type) => {
+        if (type === "FILE") {
           resolve(filePath);
-          break;
-
-        case stats.isDirectory():
+        } else if (type === "DIRECTORY") {
           fs.readdir(filePath, (err, files) => {
             if (err) {
               reject(new Error("file system error"));
-              return;
+            } else {
+              resolve(files);
             }
-            resolve(files);
           });
-          break;
-      }
-    });
+        } else {
+          resolve("");
+        }
+      })
+      .catch(() => {
+        reject(new Error("file system error"));
+      });
   });
 }
-
 /**
  * Recursively calculates size of a file or directory.
  * @param filePath Path to file or directory

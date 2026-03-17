@@ -1,152 +1,177 @@
-/**
- * Global body styling
- * Sets the main font, page background, and centers the main content container.
- */
-body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;800&family=Inter:wght@400;600;700&display=swap");
+
+/* Root variables */
+:root {
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --glass: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --card-bg: #1e293b;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
   margin: 0;
-  background-color: #f9f9f9;
+  padding: 0;
+}
+
+/* Body */
+body {
+  font-family: "Inter", sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-primary);
+  min-height: 100vh;
+
   display: flex;
   justify-content: center;
-  padding: 1.25rem;
+  align-items: center;
 }
 
-/**
- * Main container for the post viewer
- * Holds the post content, navigation buttons, and comments section.
- */
-#post-details {
-  width: 37.5rem;
-  background-color: #fff;
-  border-radius: 0.75rem;
-  box-shadow: 0 0.375rem 1.25rem rgba(0,0,0,0.1);
-  padding: 1.25rem;
-}
-
-/**
- * Post title styling
- */
-h2 {
-  margin-top: 0;
-  font-size: 1.6rem;
-  color: #333;
-}
-
-/**
- * Default paragraph styling
- * Used for post body text and other content.
- */
-p {
-  line-height: 1.6;
-  color: #555;
-}
-
-/**
- * Base button styling
- * Applies to navigation and comment buttons.
- */
-button {
-  margin: 0.3125rem 0.3125rem 0.3125rem 0;
-  padding: 0.5rem 0.875rem;
-  border: none;
-  border-radius: 0.375rem;
-  background-color: #4f46e5;
-  color: #fff;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-/**
- * Button hover effect
- */
-button:hover {
-  background-color: #6366f1;
-}
-
-/**
- * Comments container
- * Appears below the post and holds all comment elements.
- */
-#comments {
-  margin-top: 0.9375rem;
-  border-top: 0.0625rem solid #eee;
-  padding-top: 0.625rem;
-}
-
-/**
- * Individual comment card styling
- */
-.comment {
-  padding: 0.625rem;
-  margin-bottom: 0.625rem;
-  border-radius: 0.5rem;
-  background-color: #f5f5f5;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-/**
- * Hover animation for comments
- * Slight lift effect to improve visual feedback.
- */
-.comment:hover {
-  transform: translateY(-0.125rem);
-  box-shadow: 0 0.125rem 0.625rem rgba(0,0,0,0.08);
-}
-
-/**
- * Comment header (name + email)
- */
-.comment h4 {
-  margin: 0 0 0.25rem 0;
-  font-size: 0.95rem;
-  color: #222;
-}
-
-/**
- * Comment body text
- */
-.comment p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #444;
-}
-
-/**
- * Loading indicator shown while comments are being fetched
- */
-.loading {
-  padding: 0.625rem;
+/* App container */
+#app {
+  width: 100%;
+  max-width: 700px;
+  padding: 1.5rem;
   text-align: center;
-  font-style: italic;
-  color: #555;
-  animation: pulse 1.2s infinite;
 }
 
-/**
- * Simple pulsing animation used for loading state
- */
-@keyframes pulse {
-  0% { opacity: 0.4; }
-  50% { opacity: 1; }
-  100% { opacity: 0.4; }
+/* Title */
+.main-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 2rem;
 }
 
-/**
- * Container holding navigation and action buttons
- */
-#post-details > div:first-of-type {
-  margin-top: 0.9375rem;
+/* Wrapper */
+#post-wrapper {
+  position: relative;
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
 }
 
-/**
- * Disabled button state
- * Used when navigation is not possible (first/last post).
- */
-button:disabled {
-  background-color: #c7c7ff;
-  cursor: not-allowed;
+/* Card */
+/* Card */
+#post-details {
+  width: 100%;
+  background: var(--card-bg);
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  text-align: left;
+
+  /* ✅ ADD THIS */
+  min-height: 350px; /* keeps consistent size */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Post content area */
+#post-title,
+#post-body {
+  flex-shrink: 0;
+}
+
+/* Optional: make body scroll if long */
+#post-body {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+/* Title inside card */
+h2 {
+  font-family: "Outfit", sans-serif;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+/* Paragraph */
+p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Buttons */
+.post-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* Primary button */
+.primary {
+  background: var(--primary);
+  color: white;
+}
+
+/* Secondary button */
+.secondary {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  color: white;
+}
+
+/* Navigation buttons */
+.side-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 1.2rem;
+}
+
+/* Positioning */
+.side-button.left {
+  left: -60px;
+}
+
+.side-button.right {
+  right: -60px;
+}
+
+/* Comments section */
+#post-details div[id^="comments-"] {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+/* Comment card */
+.comment {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-left: 4px solid var(--primary);
+  border-radius: 0.6rem;
+}
+
+/* Comment title */
+.comment h4 {
+  margin-bottom: 0.3rem;
+  font-size: 0.95rem;
+  color: #fff;
+}
+
+/* Comment text */
+.comment p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }

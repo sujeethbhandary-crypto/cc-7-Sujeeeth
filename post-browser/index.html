@@ -1,21 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Post Browser</title>
-  <link rel="stylesheet" href="./styles/style.css"/>
-</head>
-<body>
-  <div id="app">
-    <div id="post-list-container">
-      <h1>Posts Browser</h1>
-      <div id="post-list"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Post Browser</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h1 class="main-title">Post Browser</h1>
+
+      <div id="post-wrapper">
+        <button id="prev-btn" class="side-button left">‹</button>
+
+        <div id="post-details">
+          <p id="post-meta" class="meta"></p>
+          <h2 id="post-title"></h2>
+          <p id="post-body"></p>
+
+          <div class="post-actions">
+            <button id="view-comments-btn" class="primary">
+              Show Comments
+            </button>
+            <button id="refresh-btn" class="secondary">
+              Refresh
+            </button>
+          </div>
+
+          <div id="comments-section" style="display: none"></div>
+        </div>
+
+        <button id="next-btn" class="side-button right">›</button>
+      </div>
     </div>
-    <div id="post-details-container">
-      <div id="post-details"></div>
-    </div>
-  </div>
-  <script type="module" src="./src/main.ts"></script>
-</body>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
 </html>

@@ -44,12 +44,11 @@ export class CommentList {
    */
   async render(postId: number, forceRefresh = false) {
     let comments = this.cache.get(postId.toString());
-
     const isFetching = !comments || forceRefresh;
 
     if (isFetching) {
-      // Show loading animation while fetching comments
       this.container.innerHTML = `<div class="loading">Loading comments...</div>`;
+      await new Promise((res) => setTimeout(res, 200));
     }
 
     if (!comments || forceRefresh) {
@@ -57,7 +56,6 @@ export class CommentList {
       this.cache.set(postId.toString(), comments);
     }
 
-    // Render comments in the container
     this.container.innerHTML = comments
       .map(
         (c) => `

@@ -1,148 +1,160 @@
-import type { Post, Comment } from "../services/APIService.js";
-import { APIService } from "../services/APIService.js";
-import { CacheService } from "../services/CacheService.js";
-import { CommentList } from "../modules/commentList.js";
+import type { Post, Comment } from "../services/APIService";
+import { APIService } from "../services/APIService";
+import { CacheService } from "../services/CacheService";
 
 /**
- * PostViewer is responsible for displaying posts one at a time
- * and allowing navigation between posts. It also provides
- * functionality to fetch and display comments for the current post.
+ * Handles post display, navigation, and comments
  */
 export class PostViewer {
-  /** Root container where the post viewer UI is rendered */
-  private container: HTMLElement;
-
-  /** API service used to fetch posts and comments */
   private api: APIService;
-
-  /** Cache for storing fetched posts */
-  private postsCache: CacheService<Post[]>;
-
-  /** Cache for storing comments per post */
+  private postCache: CacheService<Post>;
   private commentCache: CacheService<Comment[]>;
 
-  /** List of posts fetched from the API */
-  private posts: Post[] = [];
+  private currentId = 1;
+  private MAX_POSTS = 100;
 
-  /** Index of the currently displayed post */
-  private currentIndex: number = 0;
+  private elements = {
+    meta: document.getElementById("post-meta"),
+    title: document.getElementById("post-title"),
+    body: document.getElementById("post-body"),
+    nextBtn: document.getElementById("next-btn") as HTMLButtonElement | null,
+    prevBtn: document.getElementById("prev-btn") as HTMLButtonElement | null,
+    refreshBtn: document.getElementById("refresh-btn"),
+    viewCommentsBtn: document.getElementById(
+      "view-comments-btn",
+    ) as HTMLButtonElement | null,
+    commentsContainer: document.getElementById("comments-section"),
+  };
 
-  /**
-   * Creates a new PostViewer instance.
-   *
-   * @param container - DOM element where the viewer will be rendered
-   * @param api - APIService instance used for fetching data
-   * @param postsCache - Cache service for storing posts
-   * @param commentCache - Cache service for storing comments
-   */
   constructor(
-    container: HTMLElement,
     api: APIService,
-    postsCache: CacheService<Post[]>,
+    postCache: CacheService<Post>,
     commentCache: CacheService<Comment[]>,
   ) {
-    this.container = container;
     this.api = api;
-    this.postsCache = postsCache;
+    this.postCache = postCache;
     this.commentCache = commentCache;
   }
 
-  /**
-   * Initializes the PostViewer.
-   * Loads posts from cache if available, otherwise fetches them from the API.
-   * Displays the first post once the posts are loaded.
-   */
-  async init() {
-    let posts = this.postsCache.get("posts");
+  /** Initialize app */
+  init() {
+    this.attachEvents();
+    this.updateUI(this.currentId);
+  }
 
-    if (!posts) {
-      posts = await this.api.fetchPosts();
-      this.postsCache.set("posts", posts);
-    }
+  /** Attach all event listeners */
+  private attachEvents() {
+    this.elements.nextBtn?.addEventListener("click", () => {
+      if (this.currentId < this.MAX_POSTS) {
+        this.updateUI(++this.currentId);
+      }
+    });
 
-    this.posts = posts;
+    this.elements.prevBtn?.addEventListener("click", () => {
+      if (this.currentId > 1) {
+        this.updateUI(--this.currentId);
+      }
+    });
 
-    if (this.posts.length > 0) {
-      this.renderPost(0);
+    this.elements.refreshBtn?.addEventListener("click", () => {
+      this.postCache.clear();
+      this.commentCache.clear();
+
+      this.currentId = 1;
+      this.updateUI(this.currentId);
+    });
+
+    this.elements.viewCommentsBtn?.addEventListener("click", async () => {
+      await this.loadComments();
+    });
+  }
+
+  /** Update post UI */
+  private async updateUI(postId: number) {
+    try {
+      // Reset UI
+      if (this.elements.title) this.elements.title.textContent = "Loading...";
+      if (this.elements.body) this.elements.body.textContent = "";
+      if (this.elements.meta) this.elements.meta.textContent = "";
+
+      if (this.elements.viewCommentsBtn)
+        this.elements.viewCommentsBtn.style.display = "block";
+
+      if (this.elements.commentsContainer) {
+        this.elements.commentsContainer.style.display = "none";
+        this.elements.commentsContainer.innerHTML = "";
+      }
+
+      let post: Post;
+      const key = postId.toString();
+
+      if (this.postCache.get(key)) {
+        post = this.postCache.get(key)!;
+      } else {
+        post = await this.api.fetchPost(postId);
+        this.postCache.set(key, post);
+      }
+
+      if (this.elements.meta)
+        this.elements.meta.textContent = `POST #${post.id} OF ${this.MAX_POSTS}`;
+
+      if (this.elements.title) this.elements.title.textContent = post.title;
+
+      if (this.elements.body) this.elements.body.textContent = post.body;
+
+      if (this.elements.prevBtn) this.elements.prevBtn.disabled = postId <= 1;
+
+      if (this.elements.nextBtn)
+        this.elements.nextBtn.disabled = postId >= this.MAX_POSTS;
+    } catch (err) {
+      console.error(err);
+
+      if (this.elements.title)
+        this.elements.title.textContent = "Error loading post.";
+
+      if (this.elements.body) this.elements.body.textContent = "";
+      if (this.elements.meta) this.elements.meta.textContent = "";
+
+      if (this.elements.prevBtn) this.elements.prevBtn.disabled = true;
+      if (this.elements.nextBtn) this.elements.nextBtn.disabled = true;
     }
   }
 
-  /**
-   * Renders a post based on the provided index.
-   * Updates the UI and sets up navigation and comment buttons.
-   *
-   * @param index - Index of the post to display
-   */
-  private async renderPost(index: number) {
-    if (index < 0 || index >= this.posts.length) return;
+  /** Load comments */
+  private async loadComments() {
+    try {
+      const cacheKey = `comments-${this.currentId}`;
+      let comments: Comment[];
 
-    this.currentIndex = index;
-    const post = this.posts[index];
+      const cachedComments = this.commentCache.get(cacheKey);
 
-    const commentsContainerId = `comments-${post.id}`;
+      if (cachedComments) {
+        comments = cachedComments;
+      } else {
+        comments = await this.api.fetchComments(this.currentId);
+        this.commentCache.set(cacheKey, comments);
+      }
+      if (this.elements.viewCommentsBtn)
+        this.elements.viewCommentsBtn.style.display = "none";
 
-    this.container.innerHTML = `
-      <h2>${post.title}</h2>
-      <p>${post.body}</p>
-      <p><strong>Post ${this.currentIndex + 1} of ${this.posts.length}</strong></p>
-      <div>
-        <button id="prev-post"><- Back</button>
-        <button id="next-post">Next -></button>
-        <button id="show-comments">Show Comments</button>
-        <button id="refresh-comments">Refresh Comments</button>
-      </div>
-      <div id="${commentsContainerId}" style="display:none;"></div>
-    `;
-
-    const prevBtn = this.container.querySelector(
-      "#prev-post",
-    ) as HTMLButtonElement;
-
-    const nextBtn = this.container.querySelector(
-      "#next-post",
-    ) as HTMLButtonElement;
-
-    const showCommentsBtn = this.container.querySelector(
-      "#show-comments",
-    ) as HTMLButtonElement;
-
-    const refreshCommentsBtn = this.container.querySelector(
-      "#refresh-comments",
-    ) as HTMLButtonElement;
-
-    const commentsContainer = this.container.querySelector(
-      `#${commentsContainerId}`,
-    ) as HTMLElement;
-
-    const commentsComponent = new CommentList(
-      commentsContainer,
-      this.api,
-      this.commentCache,
-    );
-
-    prevBtn.addEventListener("click", () =>
-      this.renderPost(this.currentIndex - 1),
-    );
-
-    nextBtn.addEventListener("click", () =>
-      this.renderPost(this.currentIndex + 1),
-    );
-
-    /**
-     * Fetches and displays comments for the current post.
-     */
-    showCommentsBtn.addEventListener("click", async () => {
-      await commentsComponent.render(post.id);
-      commentsContainer.style.display = "block";
-    });
-
-    /**
-     * Forces a refresh of comments from the API,
-     * bypassing the cache.
-     */
-    refreshCommentsBtn.addEventListener("click", async () => {
-      await commentsComponent.render(post.id, true);
-      commentsContainer.style.display = "none";
-    });
+      if (this.elements.commentsContainer) {
+        this.elements.commentsContainer.style.display = "block";
+        this.elements.commentsContainer.innerHTML = `
+          <h3>Recent Comments</h3>
+          ${comments
+            .map(
+              (c) => `
+            <div class="comment">
+              <h4>${c.email}</h4>
+              <p>${c.body}</p>
+            </div>
+          `,
+            )
+            .join("")}
+        `;
+      }
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+    }
   }
 }

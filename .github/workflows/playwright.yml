@@ -1,0 +1,41 @@
+name: Playwright Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Install post-browser dependencies
+        run: |
+          cd post-browser
+          npm ci
+
+      - name: Install Playwright Browsers
+        run: |
+          cd post-browser
+          npx playwright install --with-deps
+
+      - name: Run Playwright tests
+        working-directory: post-browser
+        run: npx playwright test --project=chromium --reporter=list,html
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: post-browser/playwright-report/
+          retention-days: 30

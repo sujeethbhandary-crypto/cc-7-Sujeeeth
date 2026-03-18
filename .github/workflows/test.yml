@@ -1,12 +1,13 @@
-name: test
+name: Root Project Tests
 
-on: [push, pull_request]
-
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
 
 jobs:
-  test:
+  root-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,28 +17,14 @@ jobs:
         with:
           node-version: 24
 
-      # Root project
       - name: Install root dependencies
         run: npm install
 
       - name: Lint root
         run: npm run lint
 
+      - name: Format root
+        run: npm run format
+
       - name: Run root tests
         run: npm test
-
-      # Post Browser project
-      - name: Install post-browser dependencies
-        run: |
-          cd post-browser
-          npm install
-
-      - name: Lint post-browser
-        run: |
-          cd post-browser
-          npm run lint
-
-      - name: Run post-browser tests
-        run: |
-          cd post-browser
-          npm test

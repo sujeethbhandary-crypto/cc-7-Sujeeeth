@@ -10,6 +10,7 @@ type BeatAction = {
   type: "BEAT";
   data: {
     key: keys;
+    timestamp: number;
   };
 };
 
@@ -113,10 +114,9 @@ interface Beat {
 /**
  * Shape of the Redux state
  */
-interface State {
+export interface State {
   mode: Mode;
-  currentRecordings: Beat[]; // beats being recorded currently
-  recordings: Beat[]; // saved recording
+  recording: Beat[]; // saved recording
   startTime: number | null; // recording start timestamp
 }
 
@@ -125,8 +125,7 @@ interface State {
  */
 const initialState: State = {
   mode: "normal",
-  currentRecordings: [],
-  recordings: [],
+  recording: [],
   startTime: null,
 };
 
@@ -137,17 +136,23 @@ const initialState: State = {
  * @param action - Dispatched action
  * @returns Updated state
  */
-const reducer = (state = initialState, action: Action): State => {
+export const reducer = (state = initialState, action: Action): State => {
   switch (action.type) {
     /**
      * Start a new recording session
      */
     case "START_RECORDING":
+      if (
+        state.mode === "playback-progress" ||
+        state.mode === "playback-paused"
+      ) {
+        return state;
+      }
       return {
         ...state,
         mode: "recording-progress",
         startTime: action.timestamp,
-        currentRecordings: [],
+        recording: [],
       };
 
     /**
@@ -159,11 +164,11 @@ const reducer = (state = initialState, action: Action): State => {
       }
       return {
         ...state,
-        currentRecordings: [
-          ...state.currentRecordings,
+        recording: [
+          ...state.recording,
           {
             key: action.data.key,
-            timeStamp: Date.now() - state.startTime,
+            timeStamp: action.data.timestamp - state.startTime,
           },
         ],
       };
@@ -196,8 +201,6 @@ const reducer = (state = initialState, action: Action): State => {
       return {
         ...state,
         mode: "normal",
-        recordings: state.currentRecordings,
-        currentRecordings: [],
         startTime: null,
       };
 
@@ -205,7 +208,7 @@ const reducer = (state = initialState, action: Action): State => {
      * Start playback of saved recording
      */
     case "START_PLAYBACK":
-      if (state.recordings.length === 0) return state;
+      if (state.recording.length === 0) return state;
       return {
         ...state,
         mode: "playback-progress",
@@ -249,5 +252,7 @@ const reducer = (state = initialState, action: Action): State => {
     /**
      * Default case ensures reducer always returns state
      */
+    default:
+      return state;
   }
 };

@@ -6,7 +6,8 @@
   "scripts": {
     "test": "vitest",
     "lint": "eslint post-browser/src --ext .ts",
-    "test:assignments": "ts-node *.ts"
+    "test:assignments": "ts-node *.ts",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",
@@ -14,11 +15,13 @@
   "type": "module",
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.58.2",
     "@types/node": "^25.3.5",
     "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^10.0.3",
     "globals": "^17.4.0",
     "jiti": "^2.6.1",
+    "prettier": "^3.8.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.1",

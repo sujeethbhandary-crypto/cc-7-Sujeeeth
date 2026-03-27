@@ -39,3 +39,47 @@ jobs:
           name: playwright-report
           path: post-browser/playwright-report/
           retention-days: 30
+
+  band-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Install dependencies for Band
+      - name: Install Band dependencies
+        working-directory: Band
+        run: npm ci
+
+      # Install Playwright browsers for Band
+      - name: Install Playwright Browsers (Band)
+        working-directory: Band
+        run: npx playwright install --with-deps
+
+      # Start the Vite dev server
+      - name: Start Band app
+        working-directory: Band
+        run: npm run dev &
+
+      # Wait until server is ready
+      - name: Wait for Band server
+        run: npx wait-on http://localhost:5173
+
+      # Run Playwright tests for Band
+      - name: Run Band Playwright tests
+        working-directory: Band
+        run: npx playwright test --reporter=list
+
+      # Upload Band report
+      - name: Upload Band Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: band-playwright-report
+          path: Band/playwright-report/
+          retention-days: 30

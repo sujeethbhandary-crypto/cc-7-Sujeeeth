@@ -2,6 +2,11 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    exclude: ["**/node_modules/**", "**/dist/**", "**/post-browser/tests/**"],
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/post-browser/tests/**",
+      "Band/tests/**",
+    ],
   },
 });

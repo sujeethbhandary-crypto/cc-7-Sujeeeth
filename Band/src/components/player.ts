@@ -41,6 +41,12 @@ export class Player {
   /** Current beat index */
   beatIndex: number = 0;
 
+  /** Recorded events (beats + pauses) */
+  private recording: Recording[];
+
+  /** Callback to execute when a beat plays */
+  private playback: (beat: Beat) => void;
+
   /**
    * Total number of beats in recording
    */
@@ -52,10 +58,10 @@ export class Player {
    * @param recording - list of recorded events (beats + pauses)
    * @param playback - callback to execute when a beat plays
    */
-  constructor(
-    private recording: Recording[],
-    private playback: (beat: Beat) => void,
-  ) {}
+  constructor(recording: Recording[], playback: (beat: Beat) => void) {
+    this.recording = recording;
+    this.playback = playback;
+  }
 
   /**
    * Subscribe to playback updates
@@ -166,5 +172,11 @@ export class Player {
   pause() {
     this.sheduledPlaybackTimers.forEach((timer) => clearTimeout(timer));
     this.sheduledPlaybackTimers = [];
+  }
+
+  stop() {
+    this.pause();
+    this.beatIndex = 0;
+    this.listeners = [];
   }
 }

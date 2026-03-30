@@ -1,7 +1,7 @@
 /**
  * Allowed keyboard keys for drum beats
  */
-type keys = "A" | "S" | "D" | "F" | "G" | "H" | "J" | "K" | "L";
+export type keys = "A" | "S" | "D" | "F" | "G" | "H" | "J" | "K" | "L";
 
 /**
  * Action to record a beat press
@@ -27,6 +27,7 @@ type StartRecordingAction = {
  */
 type PauseRecordingAction = {
   type: "PAUSE_RECORDING";
+  timestamp: number;
 };
 
 /**
@@ -34,6 +35,7 @@ type PauseRecordingAction = {
  */
 type ContinueRecordingAction = {
   type: "CONTINUE_RECORDING";
+  timestamp: number;
 };
 
 /**
@@ -81,7 +83,7 @@ type ClearRecordingAction = {
 /**
  * Union type of all possible actions
  */
-type Action =
+export type Action =
   | StartRecordingAction
   | BeatAction
   | PauseRecordingAction
@@ -118,15 +120,17 @@ export interface State {
   mode: Mode;
   recording: Beat[]; // saved recording
   startTime: number | null; // recording start timestamp
+  pauseTime: number | null;
 }
 
 /**
  * Initial state of the application
  */
-const initialState: State = {
+export const initialState: State = {
   mode: "normal",
   recording: [],
   startTime: null,
+  pauseTime: null,
 };
 
 /**
@@ -181,16 +185,21 @@ export const reducer = (state = initialState, action: Action): State => {
       return {
         ...state,
         mode: "recording-paused",
+        pauseTime: action.timestamp,
       };
 
     /**
      * Resume recording
      */
     case "CONTINUE_RECORDING":
-      if (state.mode !== "recording-paused") return state;
+      if (state.mode !== "recording-paused" || state.pauseTime == null)
+        return state;
+      const pauseDuration = action.timestamp - state.pauseTime;
       return {
         ...state,
         mode: "recording-progress",
+        startTime: (state.startTime ?? 0) + pauseDuration,
+        pauseTime: null,
       };
 
     /**
@@ -202,6 +211,7 @@ export const reducer = (state = initialState, action: Action): State => {
         ...state,
         mode: "normal",
         startTime: null,
+        pauseTime: null,
       };
 
     /**

@@ -1,0 +1,19 @@
+{
+  "name": "band",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+     "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "typescript": "~5.9.3",
+    "vite": "^8.0.1"
+  }
+}
